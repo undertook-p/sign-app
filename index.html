@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>เซ็นเอกสาร PMC</title>
+<meta name="theme-color" content="#14294f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one-column phone tool. Sticky bottom action bar, page preview in the middle. */
+:root{
+  --bg:#f3f5f9; --surface:#ffffff; --fg:#14213d; --muted:#5b6882; --line:#d5dbe8;
+  --navy:#14294f; --on-navy:#ffffff; --yellow:#f2b705; --on-yellow:#14213d;
+  --sky:#2a7fc1; --danger:#c8372d; --paper:#ffffff; --shadow:0 1px 3px rgba(20,41,79,.18);
+  --font:'Sarabun',system-ui,-apple-system,'Noto Sans Thai','Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1626; --surface:#17223a; --fg:#e8edf7; --muted:#9fb0cc; --line:#2a3957;
+    --navy:#0a1428; --on-navy:#ffffff; --yellow:#f2b705; --on-yellow:#14213d;
+    --sky:#5aa8e6; --danger:#ef6a5f; --paper:#ffffff; --shadow:0 1px 3px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1626; --surface:#17223a; --fg:#e8edf7; --muted:#9fb0cc; --line:#2a3957;
+  --navy:#0a1428; --on-navy:#ffffff; --yellow:#f2b705; --on-yellow:#14213d;
+  --sky:#5aa8e6; --danger:#ef6a5f; --paper:#ffffff; --shadow:0 1px 3px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+.top{display:flex;align-items:center;gap:12px;padding:14px 0 10px}
+.top h1{font-size:1.25rem;margin:0;font-weight:700;letter-spacing:.01em}
+.top p{margin:0;color:var(--muted);font-size:.85rem}
+.mark{width:46px;height:34px;border-radius:8px;background:var(--navy);color:var(--yellow);display:grid;place-items:center;font-weight:700;font-size:.8rem;letter-spacing:.04em;flex:none}
+.pick{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:4px 0 12px}
+.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);
+  border-radius:10px;padding:11px 14px;min-height:46px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.btn.primary{background:var(--navy);color:var(--on-navy);border-color:var(--navy)}
+.btn.save{background:var(--yellow);color:var(--on-yellow);border-color:var(--yellow)}
+.btn.danger{color:var(--danger)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.fname{color:var(--muted);font-size:.9rem;min-width:0;overflow-wrap:anywhere}
+.badge{display:inline-block;font-size:.75rem;font-weight:600;background:var(--yellow);color:var(--on-yellow);border-radius:999px;padding:2px 9px;margin-left:6px}
+.stagewrap{padding-bottom:190px}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;box-shadow:var(--shadow)}
+.pagebox{position:relative;width:100%;margin:0 auto;background:var(--paper);touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.pagebox canvas{display:block;width:100%;height:auto}
+.item{position:absolute;touch-action:none;cursor:grab;outline:1px dashed transparent}
+.item img{display:block;width:100%;height:auto;pointer-events:none}
+.item.sel{outline:2px dashed var(--sky);outline-offset:2px;background:rgba(42,127,193,.08)}
+.pager{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0 0}
+.pager span{font-variant-numeric:tabular-nums;color:var(--muted)}
+.dock{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(20,41,79,.12);
+  padding:10px max(16px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:5}
+.dock .inner{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row .btn{flex:1 1 auto;justify-content:center}
+.edit{display:flex;flex-direction:column;gap:8px}
+.edit label{font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:10px;flex:1 1 140px;min-width:0}
+.row.ed .btn{flex:0 0 auto;min-height:40px;padding:8px 12px}
+.edit input[type=range]{flex:1;min-width:0;accent-color:var(--sky);height:28px}
+textarea{width:100%;font:inherit;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);color:var(--fg);resize:vertical}
+.fmt{gap:6px}.fl{font-size:.85rem;color:var(--muted);margin-right:4px}
+.seg{position:relative;flex:0 0 auto}
+.seg input{position:absolute;opacity:0;inset:0;margin:0}
+.seg span{display:inline-flex;align-items:center;justify-content:center;min-width:64px;min-height:40px;padding:6px 14px;border:1px solid var(--line);border-radius:10px;font-weight:600;background:var(--surface);cursor:pointer}
+.seg input:checked+span{background:var(--navy);color:var(--on-navy);border-color:var(--navy)}
+.seg input:focus-visible+span{outline:3px solid var(--sky);outline-offset:2px}
+.msg{min-height:1.3em;font-size:.88rem;color:var(--muted)}
+.msg.err{color:var(--danger)}
+.note{font-size:.82rem;color:var(--muted);margin:10px 0 0}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="mark" aria-hidden="true">PMC</div>
+  <div>
+    <h1>เซ็นเอกสาร</h1>
+    <p>เลือกไฟล์จากเครื่อง วางลายเซ็น แล้วบันทึก</p>
+  </div>
+</header>
+
+<div class="pick">
+  <label class="btn primary" for="file">เลือกไฟล์ PDF หรือรูป</label>
+  <input id="file" type="file" accept="application/pdf,image/*">
+  <span class="fname" id="fname">ตัวอย่างเอกสาร <span class="badge">ตัวอย่าง</span></span>
+</div>
+
+<div class="stagewrap">
+  <div class="stage">
+    <div class="pagebox" id="pagebox">
+      <canvas id="cv" aria-label="หน้าเอกสาร"></canvas>
+      <div id="layer"></div>
+    </div>
+    <div class="pager" id="pager" hidden>
+      <button class="btn" id="prev" aria-label="หน้าก่อนหน้า">‹</button>
+      <span id="pg">1 / 1</span>
+      <button class="btn" id="next" aria-label="หน้าถัดไป">›</button>
+    </div>
+  </div>
+  <p class="note"><button class="btn" id="chgSig" style="min-height:38px;padding:6px 12px;box-shadow:none">เลือก/เปลี่ยนลายเซ็น</button><input id="sigfile" type="file" accept="image/*"></p>
+  <p class="note">ลากลายเซ็นไปวางบนช่องที่ต้องการ แตะที่ลายเซ็นเพื่อปรับขนาด ไฟล์ถูกประมวลผลในเครื่องนี้เท่านั้น ไม่ได้ส่งไปที่อื่น ลายเซ็นที่เลือกถูกเก็บไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น</p>
+</div>
+
+<div class="dock" role="region" aria-label="เครื่องมือ">
+  <div class="inner">
+    <div class="edit" id="edit" hidden>
+      <div class="row ed">
+        <label>ขนาด <input id="size" type="range" min="6" max="70" step="1"></label>
+        <button class="btn" id="tgl" hidden>แก้ข้อความ</button>
+        <button class="btn danger" id="del">ลบ</button>
+      </div>
+      <textarea id="txt" rows="3" hidden aria-label="ข้อความ"></textarea>
+    </div>
+    <div class="row">
+      <button class="btn" id="addSig">+ ลายเซ็น</button>
+      <button class="btn" id="addAck">+ รับทราบ</button>
+    </div>
+    <div class="row fmt" role="radiogroup" aria-label="ชนิดไฟล์ที่ได้">
+      <span class="fl">ไฟล์ที่ได้</span>
+      <label class="seg"><input type="radio" name="fmt" value="pdf" id="fpdf"><span>PDF</span></label>
+      <label class="seg"><input type="radio" name="fmt" value="jpg" id="fjpg"><span>JPG</span></label>
+    </div>
+    <div class="row">
+      <button class="btn" id="share" hidden>แชร์</button>
+      <button class="btn save" id="save" disabled>บันทึกไฟล์ที่เซ็นแล้ว</button>
+    </div>
+    <div class="msg" id="msg" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+(function(){
+  var SIG_DEFAULT = "";
+  var $ = function(id){return document.getElementById(id)};
+  var cv=$('cv'), ctx=cv.getContext('2d'), layer=$('layer'), box=$('pagebox');
+  var msgEl=$('msg');
+  var sigSrc=SIG_DEFAULT;
+  try{ var s=localStorage.getItem('pmc-sign-sig'); if(s) sigSrc=s; }catch(e){}
+
+  var doc={kind:'sample',name:'ตัวอย่าง',pages:1,bytes:null,pdf:null,img:null,rot:false};
+  var page=1, items=[], sel=null, uid=1, renderTok=0, dl=null, busy=false;
+
+  function say(t,err){ msgEl.textContent=t||''; msgEl.className='msg'+(err?' err':''); }
+  function loadImg(src){ return new Promise(function(res,rej){ var i=new Image(); i.onload=function(){res(i)}; i.onerror=function(){rej(new Error('img'))}; i.src=src; }); }
+
+  /* ---------- text blocks rendered to PNG ---------- */
+  function beDate(){ var d=new Date(); return d.getDate()+'/'+(d.getMonth()+1)+'/'+(d.getFullYear()+543); }
+  function defaultAck(){ return 'รับทราบ\n(นายปรียวัทน์ ด้วงนิล)\nผู้จัดการทั่วไป\nวันที่ '+beDate(); }
+  async function textToPng(text){
+    try{ await document.fonts.load('600 40px Sarabun'); }catch(e){}
+    var fs=44, lh=Math.round(fs*1.35), pad=14, lines=text.split('\n');
+    var c=document.createElement('canvas'), x=c.getContext('2d');
+    var font='600 '+fs+'px Sarabun, "Noto Sans Thai", system-ui, sans-serif';
+    x.font=font;
+    var w=0; lines.forEach(function(l){ w=Math.max(w,x.measureText(l).width); });
+    c.width=Math.ceil(w+pad*2); c.height=lh*lines.length+pad*2;
+    x=c.getContext('2d'); x.font=font; x.fillStyle='#1a3a9c'; x.textBaseline='alphabetic';
+    lines.forEach(function(l,i){ x.fillText(l,pad,pad+lh*i+fs); });
+    return {src:c.toDataURL('image/png'),ar:c.height/c.width};
+  }
+
+  /* ---------- items ---------- */
+  async function addItem(kind,text){
+    var it={id:uid++,kind:kind,page:page,x:.52,y:.78,w:kind==='sig'?.26:.34,text:text||''};
+    if(kind==='sig'){ it.src=sigSrc; var im=await loadImg(sigSrc); it.ar=im.height/im.width; it.img=im; }
+    else { var t=await textToPng(it.text); it.src=t.src; it.ar=t.ar; it.img=await loadImg(t.src); }
+    items.push(it); select(it); drawItems(); updateSave();
+    return it;
+  }
+  function drawItems(){
+    layer.innerHTML='';
+    items.filter(function(i){return i.page===page}).forEach(function(it){
+      var d=document.createElement('div'); d.className='item'+(it===sel?' sel':'');
+      d.style.left=(it.x*100)+'%'; d.style.top=(it.y*100)+'%'; d.style.width=(it.w*100)+'%';
+      var im=document.createElement('img'); im.src=it.src; im.alt=''; d.appendChild(im);
+      bindDrag(d,it); layer.appendChild(d);
+    });
+  }
+  function bindDrag(el,it){
+    var sx,sy,ox,oy,moved=false,id=null;
+    el.addEventListener('pointerdown',function(e){
+      e.preventDefault(); e.stopPropagation(); id=e.pointerId; el.setPointerCapture(id);
+      sx=e.clientX; sy=e.clientY; ox=it.x; oy=it.y; moved=false; if(sel!==it){ select(it); }
+    });
+    el.addEventListener('pointermove',function(e){
+      if(id!==e.pointerId) return; var r=box.getBoundingClientRect();
+      var dx=(e.clientX-sx)/r.width, dy=(e.clientY-sy)/r.height; if(Math.abs(dx)+Math.abs(dy)>0.003) moved=true;
+      it.x=Math.min(Math.max(ox+dx,-.05),1.05-it.w); it.y=Math.min(Math.max(oy+dy,-.05),1.05-it.w*it.ar*(r.width/r.height));
+      el.style.left=(it.x*100)+'%'; el.style.top=(it.y*100)+'%';
+    });
+    function end(e){ if(id!==e.pointerId) return; id=null; }
+    el.addEventListener('pointerup',end); el.addEventListener('pointercancel',end);
+  }
+  function select(it){
+    sel=it; var ed=$('edit'); ed.hidden=!it;
+    if(it){ $('size').value=Math.round(it.w*100); var t=$('txt'); t.hidden=true; $('tgl').hidden=it.kind!=='ack'; if(it.kind==='ack') t.value=it.text; }
+    var els=layer.children; var vis=items.filter(function(i){return i.page===page});
+    for(var k=0;k<els.length;k++){ els[k].classList.toggle('sel',vis[k]===it); }
+  }
+  box.addEventListener('pointerdown',function(e){ if(e.target===cv||e.target===layer||e.target===box){ select(null); } });
+
+  $('size').addEventListener('input',function(){ if(!sel) return; sel.w=this.value/100; drawItems(); });
+  var txtTimer=null;
+  $('txt').addEventListener('input',function(){
+    if(!sel||sel.kind!=='ack') return; var it=sel, v=this.value; it.text=v;
+    clearTimeout(txtTimer); txtTimer=setTimeout(async function(){
+      var t=await textToPng(v||' '); it.src=t.src; it.ar=t.ar; it.img=await loadImg(t.src); drawItems();
+    },200);
+  });
+  $('tgl').addEventListener('click',function(){ $('txt').hidden=!$('txt').hidden; });
+  $('del').addEventListener('click',function(){ if(!sel) return; items=items.filter(function(i){return i!==sel}); select(null); drawItems(); updateSave(); });
+  $('addSig').addEventListener('click',function(){ if(!sigSrc){ say('ยังไม่มีลายเซ็น เลือกไฟล์ลายเซ็น (PNG พื้นหลังโปร่งใส) จากเครื่องก่อน'); $('sigfile').click(); return; } addItem('sig'); });
+  $('addAck').addEventListener('click',function(){ addItem('ack',defaultAck()); });
+  $('chgSig').addEventListener('click',function(){ $('sigfile').click(); });
+  $('sigfile').addEventListener('change',function(){
+    var f=this.files[0]; this.value=''; if(!f) return;
+    var rd=new FileReader(); rd.onload=function(){
+      sigSrc=rd.result; try{ localStorage.setItem('pmc-sign-sig',sigSrc); }catch(e){}
+      say('บันทึกลายเซ็นไว้ในเครื่องนี้แล้ว กด + ลายเซ็นเพื่อวาง');
+    }; rd.readAsDataURL(f);
+  });
+
+  /* ---------- page rendering ---------- */
+  function sizeCanvas(w,h){
+    var cssW=Math.min(box.parentElement.clientWidth-20,720); box.style.maxWidth=cssW+'px';
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    cv.width=Math.round(cssW*dpr); cv.height=Math.round(cssW*dpr*h/w);
+    return cv.width/w;
+  }
+  async function drawSample(){
+    var W=1240,H=1754; cv.width=W; cv.height=H; box.style.maxWidth=Math.min(box.parentElement.clientWidth-20,720)+'px';
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H); ctx.fillStyle='#14294f';
+    ctx.font='700 54px Sarabun, sans-serif'; ctx.fillText('ใบสั่งซื้อ (ตัวอย่าง)',90,150);
+    ctx.font='400 34px Sarabun, sans-serif'; ctx.fillStyle='#55627d';
+    ctx.fillText('เอกสารตัวอย่างเพื่อทดลองวางลายเซ็น ไม่ใช่เอกสารจริง',90,210);
+    ctx.strokeStyle='#c9d1e2'; ctx.lineWidth=2; ctx.strokeRect(90,300,1060,700);
+    ctx.fillStyle='#14213d'; ctx.font='400 36px Sarabun, sans-serif';
+    ctx.fillText('1   สินค้าตัวอย่าง A      100 กก.      70.00      7,000.00',120,380);
+    ctx.fillText('2   สินค้าตัวอย่าง B      50 กก.       30.00      1,500.00',120,450);
+    ctx.fillText('รวมทั้งสิ้น  8,500.00 บาท',700,940);
+    ctx.strokeStyle='#14213d'; ctx.beginPath(); ctx.moveTo(130,1500); ctx.lineTo(500,1500); ctx.moveTo(740,1500); ctx.lineTo(1110,1500); ctx.stroke();
+    ctx.font='400 32px Sarabun, sans-serif'; ctx.fillText('ผู้สั่งซื้อ',270,1550); ctx.fillText('ผู้อนุมัติ',880,1550);
+  }
+  async function renderPage(){
+    var tok=++renderTok;
+    if(doc.kind==='sample'){ await drawSample(); }
+    else if(doc.kind==='img'){
+      var w=doc.img.naturalWidth,h=doc.img.naturalHeight, sc=sizeCanvas(w,h);
+      ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height); ctx.drawImage(doc.img,0,0,cv.width,cv.height);
+    } else {
+      var pg=await doc.pdf.getPage(page); if(tok!==renderTok) return;
+      var v1=pg.getViewport({scale:1}); var sc2=sizeCanvas(v1.width,v1.height);
+      var vp=pg.getViewport({scale:sc2});
+      var task=pg.render({canvasContext:ctx,viewport:vp}); await task.promise;
+    }
+    if(tok!==renderTok) return; drawItems();
+    $('pager').hidden=!(doc.kind==='pdf'&&doc.pages>1); $('pg').textContent=page+' / '+doc.pages;
+    $('prev').disabled=page<=1; $('next').disabled=page>=doc.pages;
+  }
+  $('prev').addEventListener('click',function(){ if(page>1){ page--; select(null); renderPage(); } });
+  $('next').addEventListener('click',function(){ if(page<doc.pages){ page++; select(null); renderPage(); } });
+  window.addEventListener('resize',function(){ clearTimeout(window.__rt); window.__rt=setTimeout(renderPage,200); });
+
+  /* ---------- open a file ---------- */
+  $('file').addEventListener('change',async function(){
+    var f=this.files[0]; this.value=''; if(!f) return;
+    say('กำลังเปิดไฟล์…'); items=[]; select(null); page=1;
+    try{
+      if(f.type==='application/pdf'||/\.pdf$/i.test(f.name)){
+        var buf=await f.arrayBuffer();
+        if(!window.pdfjsLib) throw new Error('pdfjs');
+        pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        var pdf=await pdfjsLib.getDocument({data:buf.slice(0)}).promise;
+        var rot=false; for(var p=1;p<=pdf.numPages;p++){ var pp=await pdf.getPage(p); if(pp.rotate%360!==0) rot=true; }
+        doc={kind:'pdf',name:f.name,pages:pdf.numPages,bytes:buf,pdf:pdf,img:null,rot:rot};
+      } else if(/^image\//.test(f.type)){
+        var url=URL.createObjectURL(f); var im=await loadImg(url);
+        doc={kind:'img',name:f.name,pages:1,bytes:null,pdf:null,img:im,rot:false};
+      } else { throw new Error('type'); }
+      $('fname').textContent=f.name; setFmt(doc.kind==='img'?'jpg':'pdf'); await renderPage(); updateSave(); say('เปิดแล้ว กดปุ่ม + ลายเซ็น แล้วลากไปวาง');
+    }catch(e){ say('เปิดไฟล์นี้ไม่ได้ ลองไฟล์ PDF หรือรูป JPG/PNG',true); }
+  });
+
+  /* ---------- save / share ---------- */
+  var fmt='pdf';
+  function setFmt(v){ fmt=v; $('fpdf').checked=(v==='pdf'); $('fjpg').checked=(v==='jpg'); }
+  $('fpdf').addEventListener('change',function(){ setFmt('pdf'); });
+  $('fjpg').addEventListener('change',function(){ setFmt('jpg'); });
+  setFmt('pdf');
+  function updateSave(){ var off=busy||doc.kind==='sample'||items.length===0; $('save').disabled=off; $('share').disabled=off; }
+  function baseName(n){ return (n||'document').replace(/\.[^.]+$/,''); }
+  function burn(c,pageIdx,W,H){
+    items.filter(function(i){return i.page===pageIdx}).forEach(function(it){
+      var w=it.w*W; c.drawImage(it.img,it.x*W,it.y*H,w,w*it.ar);
+    });
+  }
+  function toBlob(c,q){ return new Promise(function(r){ c.toBlob(r,'image/jpeg',q); }); }
+  async function imageCanvas(maxSide){
+    var im=doc.img, w=im.naturalWidth,h=im.naturalHeight, k=Math.min(1,maxSide/Math.max(w,h));
+    var c=document.createElement('canvas'); c.width=Math.round(w*k); c.height=Math.round(h*k);
+    var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(im,0,0,c.width,c.height);
+    burn(x,1,c.width,c.height); return c;
+  }
+  async function pdfPageCanvas(n,longSide){
+    var pg=await doc.pdf.getPage(n), v1=pg.getViewport({scale:1}), vp=pg.getViewport({scale:longSide/Math.max(v1.width,v1.height)});
+    var c=document.createElement('canvas'); c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+    var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height);
+    await pg.render({canvasContext:x,viewport:vp}).promise; burn(x,n,c.width,c.height);
+    return {c:c,w:v1.width,h:v1.height};
+  }
+  async function pdfVector(){
+    var P=PDFLib, pdf=await P.PDFDocument.load(doc.bytes,{ignoreEncryption:true}), cache={};
+    for(var i=0;i<items.length;i++){
+      var it=items[i], emb=cache[it.src]; if(!emb){ emb=await pdf.embedPng(it.src); cache[it.src]=emb; }
+      var pg=pdf.getPage(it.page-1), sz=pg.getSize(), w=it.w*sz.width, h=w*it.ar;
+      pg.drawImage(emb,{x:it.x*sz.width,y:sz.height-it.y*sz.height-h,width:w,height:h});
+    }
+    return await pdf.save();
+  }
+  async function pdfFromCanvases(list){
+    var out=await PDFLib.PDFDocument.create();
+    for(var i=0;i<list.length;i++){
+      var jb=await toBlob(list[i].c,.88), jimg=await out.embedJpg(await jb.arrayBuffer());
+      var np=out.addPage([list[i].w,list[i].h]); np.drawImage(jimg,{x:0,y:0,width:list[i].w,height:list[i].h});
+    }
+    return await out.save();
+  }
+  async function buildFiles(){
+    var base=baseName(doc.name);
+    var pdfType={type:'application/pdf'};
+    if(doc.kind==='img'){
+      if(fmt==='jpg'){ var c=await imageCanvas(4000); return [{blob:await toBlob(c,.92),name:base+'_signed.jpg'}]; }
+      var c2=await imageCanvas(2600); var w=595, h=Math.round(595*c2.height/c2.width);
+      var bytes=await pdfFromCanvases([{c:c2,w:w,h:h}]); return [{blob:new Blob([bytes],pdfType),name:base+'_signed.pdf'}];
+    }
+    if(fmt==='jpg'){
+      var files=[]; for(var n=1;n<=doc.pages;n++){ var r=await pdfPageCanvas(n,2400);
+        files.push({blob:await toBlob(r.c,.92),name:base+'_signed'+(doc.pages>1?'_p'+n:'')+'.jpg'}); }
+      return files;
+    }
+    var out;
+    if(!doc.rot){ try{ out=await pdfVector(); }catch(e){ out=null; } }
+    if(!out){ var list=[]; for(var m=1;m<=doc.pages;m++){ list.push(await pdfPageCanvas(m,1700)); } out=await pdfFromCanvases(list); }
+    return [{blob:new Blob([out],pdfType),name:base+'_signed.pdf'}];
+  }
+  function canShareFiles(){
+    try{ if(!navigator.canShare||!navigator.share) return false; var f=new File([new Blob(['x'])],'a.pdf',{type:'application/pdf'}); return navigator.canShare({files:[f]}); }catch(e){ return false; }
+  }
+  async function run(mode){
+    if(busy) return; busy=true; updateSave(); say('กำลังสร้างไฟล์…');
+    try{
+      var files=await buildFiles();
+      if(mode==='share'){
+        var fl=files.map(function(f){ return new File([f.blob],f.name,{type:f.blob.type}); });
+        try{ await navigator.share({files:fl}); say('แชร์แล้ว'); }
+        catch(e){ if(e&&e.name==='AbortError') say('ยกเลิกการแชร์'); else say('แชร์ไม่ได้ในเครื่องนี้ ลองกดบันทึกแทน',true); }
+      } else {
+        for(var i=0;i<files.length;i++){
+          if(dl){ await dl.save({filename:files[i].name,data:files[i].blob}); }
+          else { var u=URL.createObjectURL(files[i].blob), a=document.createElement('a'); a.href=u; a.download=files[i].name; document.body.appendChild(a); a.click(); a.remove(); (function(u){ setTimeout(function(){URL.revokeObjectURL(u)},4000); })(u); }
+        }
+        say('บันทึกแล้ว: '+files.map(function(f){return f.name}).join(', '));
+      }
+    }catch(e){ if(e&&e.code==='declined') say('ยกเลิกการบันทึก'); else say('สร้างไฟล์ไม่สำเร็จ ลองอีกครั้ง',true); }
+    busy=false; updateSave();
+  }
+  $('save').addEventListener('click',function(){ run('save'); });
+  $('share').addEventListener('click',function(){ run('share'); });
+  if(canShareFiles()) $('share').hidden=false;
+
+  /* ---------- start ---------- */
+  (async function(){
+    await renderPage();
+    if(sigSrc){ var it=await addItem('sig'); it.x=.62; it.y=.80; it.w=.26; select(null); drawItems(); } else { say('เริ่มต้น: กด เลือก/เปลี่ยนลายเซ็น แล้วเลือกไฟล์ลายเซ็นของคุณ 1 ครั้ง'); }
+    try{ var api=await claude.use('downloads'); dl=api||null; }catch(e){ dl=null; }
+    
+    updateSave();
+  })();
+})();
+</script>
+
+</body>
+</html>
